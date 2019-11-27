@@ -1,0 +1,7 @@
+/venv
+/.vscode
+*.pyc
+hit.json
+tasks.json
+.DS_Store
+db.sqlite3
