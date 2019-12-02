@@ -25,7 +25,7 @@ SECRET_KEY = '*+y$x6s9$rkcuw$(+(z_6)sisjc_mlmii^mg$5$b-q(er03&7z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['cs489.hyunwoo.me']
 
 
 # Application definition
