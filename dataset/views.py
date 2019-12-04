@@ -60,6 +60,7 @@ for result in result_list:
         distance[category][group][result['task']]['distribution'][result['value'] - 1] += 1
     overall_distribution[result['task']]['distribution'][result['value'] - 1] += 1
 
+
 for category in categories:
     for group in distance[category].keys():
         for image in distance[category][group].keys():
@@ -118,4 +119,3 @@ def image_dist(request, image, group):
                 'selectedDistribution': distance[category][group][image]['distribution']
             }
             return JsonResponse(ret)
-    
