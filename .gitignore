@@ -1,5 +1,6 @@
 /venv
 /.vscode
+/static/
 *.pyc
 hit.json
 tasks.json
