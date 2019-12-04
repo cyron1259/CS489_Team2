@@ -70,7 +70,7 @@ for category in categories:
 
 for category in categories:
     for group in distance[category].keys():
-        min = 0
+        min = 4
         max = 0
         sum = 0
         count = 0
