@@ -1,20 +1,18 @@
 import json
-from dataset.models import Worker, Task, Result
+from dataset.models import Worker, Category, Task, Result
 
 def addWorker():
-    with open('hit.json') as infile:
+    with open('hit.json') as infile, open('metadata.json') as mdfile:
         data = json.load(infile)
+        md = json.load(mdfile)
         for entry in data:
-            w = Worker(worker_id=entry['workerId'],
-                age_group=entry['demographic']['age'],
-                gender=entry['demographic']['gender'],
-                ethnicity=entry['demographic']['ethnicity'],
-                education=entry['demographic']['education'],
-                marital=entry['demographic']['marital'],
-                income=entry['demographic']['income'],
-                employment=entry['demographic']['employment'],
-                location=entry['demographic']['location'])
+            w = Worker(worker_id=entry['workerId'])
             w.save()
+            for cat in md["categories"].keys():
+                c = Category(worker=w,
+                    category=cat,
+                    group=entry['demographic'][cat])
+                c.save()
 
 def addTask():
     with open('tasks.json') as infile:

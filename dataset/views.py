@@ -2,6 +2,13 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Worker, Task, Result
 from .serializers import WorkerSerializer, ResultSerializer
+import json
+import os.path
+
+with open(os.path.dirname(__file__) + '/../metadata.json') as mdfile:
+    md = json.load(mdfile)
+    scale = md['scale']
+    categories = md['categories'].keys()
 
 def normalize(v):
     sum = 0
@@ -11,7 +18,7 @@ def normalize(v):
     return [x/sum for x in v]
 
 def compute_Wasserstein(v1, v2):
-    d = [0, 0, 0, 0, 0, 0]
+    d = [0 for i in range(scale + 1)]
     sum = 0
     for i in range(len(v1)):
         d[i + 1] = v1[i] + d[i] - v2[i]
@@ -27,7 +34,6 @@ image_list = []
 worker_serializer = WorkerSerializer(Worker.objects.all(), many=True)
 result_serializer = ResultSerializer(Result.objects.all(), many=True)
 
-categories = WorkerSerializer.Meta.fields[1:]
 for category in categories:
     distance[category] = {}
     group_size[category] = {}
@@ -37,9 +43,9 @@ result_list = result_serializer.data
 
 for worker in worker_list:
     for category in categories:
-        if worker[category] not in group_size[category]:
-            group_size[category][worker[category]] = 0
-        group_size[category][worker[category]] += 1
+        if worker['categories'][category] not in group_size[category]:
+            group_size[category][worker['categories'][category]] = 0
+        group_size[category][worker['categories'][category]] += 1
 
 for result in result_list:
     if result['task'].startswith('img') and result['task'] not in image_list:
@@ -51,10 +57,10 @@ for result in result_list:
             distance[category][group] = {}
         
         if result['task'] not in distance[category][group]:
-            distance[category][group][result['task']] = {'count': 0, 'distribution': [0, 0, 0, 0, 0]}
+            distance[category][group][result['task']] = {'count': 0, 'distribution': [0 for i in range(scale)]}
 
         if result['task'] not in overall_distribution:
-            overall_distribution[result['task']] = {'distribution': [0, 0, 0, 0, 0]}
+            overall_distribution[result['task']] = {'distribution': [0 for i in range(scale)]}
 
         if 'workers' not in distance[category][group][result['task']]:
             distance[category][group][result['task']]['workers'] = {}
@@ -76,7 +82,7 @@ for category in categories:
 
 for category in categories:
     for group in distance[category].keys():
-        min = 4
+        min = scale - 1
         max = 0
         sum = 0
         count = 0
