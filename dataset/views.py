@@ -55,9 +55,15 @@ for result in result_list:
 
         if result['task'] not in overall_distribution:
             overall_distribution[result['task']] = {'distribution': [0, 0, 0, 0, 0]}
+
+        if 'workers' not in distance[category][group][result['task']]:
+            distance[category][group][result['task']]['workers'] = {}
+            for i in range(5):
+                distance[category][group][result['task']]['workers'][str(i+1)] = []
         
         distance[category][group][result['task']]['count'] += 1
         distance[category][group][result['task']]['distribution'][result['value'] - 1] += 1
+        distance[category][group][result['task']]['workers'][str(result['value'])].append(result['worker'])
     overall_distribution[result['task']]['distribution'][result['value'] - 1] += 1
 
 for category in categories:
@@ -117,7 +123,8 @@ def image_dist(request, image, group):
                     'group': group,
                     'uri': request.get_host() + '/static/images/'+image+'.jpg',
                     'overallDistribution': overall_distribution[image]['distribution'],
-                    'selectedDistribution': distance[category][group][image]['distribution']
+                    'selectedDistribution': distance[category][group][image]['distribution'],
+                    'workers': distance[category][group][image]['workers']
                 }
             else:
                 ret = {}
