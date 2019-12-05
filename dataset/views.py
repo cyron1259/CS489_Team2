@@ -116,7 +116,7 @@ def image_dist(request, image, group):
                     'id': image,
                     'group': group,
                     'uri': request.get_host() + '/static/images/'+image+'.jpg',
-                    'overallDistriution': overall_distribution[image]['distribution'],
+                    'overallDistribution': overall_distribution[image]['distribution'],
                     'selectedDistribution': distance[category][group][image]['distribution']
                 }
             else:
