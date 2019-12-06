@@ -1,0 +1,12 @@
+{   
+    "categories": {
+        "age": ["18-24", "25-34", "35-44", "45-54", "55-64"],
+        "gender": ["male", "female", "not_to_say"],
+        "ethnicity": ["white", "black_african", "hispanic_latino", "asian", "native", "other"],
+        "education": ["less_than_high_school", "high_school", "bachelor", "master", "doctorate", "other"],
+        "marital": ["single", "married", "domestic_partnership", "divorced", "widowed"],
+        "income": ["-10", "10-50", "50-100", "100-150", "150-"],
+        "employment": ["full-time", "self-employed", "part-time", "retired", "student", "other"]
+    },
+    "scale": 5
+}

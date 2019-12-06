@@ -1,20 +1,21 @@
 from rest_framework import serializers
-from .models import Worker, Task, Result
+from .models import Worker, Category, Task, Result
+
+class CategorySerializer(serializers.ModelSerializer):
+    category = serializers.CharField(max_length=30)
+    group = serializers.CharField(max_length=30)
+
+    class Meta:
+        model = Category
+        fields = ['category', 'group']
 
 class WorkerSerializer(serializers.ModelSerializer):
     worker_id = serializers.CharField(max_length=30)
-    age_group = serializers.CharField(max_length=30)
-    gender = serializers.CharField(max_length=30)
-    ethnicity = serializers.CharField(max_length=30)
-    education = serializers.CharField(max_length=30)
-    marital = serializers.CharField(max_length=30)
-    income = serializers.CharField(max_length=30)
-    employment = serializers.CharField(max_length=30)
-    location = serializers.CharField(max_length=30)
+    categories = CategorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Worker
-        fields = ['worker_id', 'age_group', 'gender', 'ethnicity', 'education', 'marital', 'income', 'employment', 'location']
+        fields = ['worker_id', 'categories']
 
 class ResultSerializer(serializers.ModelSerializer):
     worker = serializers.PrimaryKeyRelatedField(queryset=Worker.objects.all())

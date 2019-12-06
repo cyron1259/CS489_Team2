@@ -1,19 +1,17 @@
 import uuid
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 class Worker(models.Model):
     worker_id = models.CharField(max_length=30)
-    age_group = models.CharField(max_length=30)
-    gender = models.CharField(max_length=30)
-    ethnicity = models.CharField(max_length=30)
-    education = models.CharField(max_length=30)
-    marital = models.CharField(max_length=30)
-    income = models.CharField(max_length=30)
-    employment = models.CharField(max_length=30)
-    location = models.CharField(max_length=30)
 
     def __str__(self):
         return self.worker_id
+
+class Category(models.Model):
+    worker = models.ForeignKey(Worker, related_name="categories", on_delete=models.CASCADE)
+    category = models.CharField(max_length=30)
+    group = models.CharField(max_length=30)
 
 class Task(models.Model):
     task_id = models.CharField(max_length=30)
