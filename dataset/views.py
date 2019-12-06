@@ -42,16 +42,21 @@ worker_list = worker_serializer.data
 result_list = result_serializer.data
 
 for worker in worker_list:
-    for category in categories:
-        if worker['categories'][category] not in group_size[category]:
-            group_size[category][worker['categories'][category]] = 0
-        group_size[category][worker['categories'][category]] += 1
+    for category_dict in worker['categories']:
+        category = category_dict['category']
+        if category_dict['group'] not in group_size[category]:
+            group_size[category][category_dict['group']] = 0
+        group_size[category][category_dict['group']] += 1
 
 for result in result_list:
     if result['task'].startswith('img') and result['task'] not in image_list:
         image_list.append(result['task'])
     for category in categories:
-        group = worker_list[result['worker'] - 1][category]
+
+        for category_dict in worker_list[result['worker'] - 1]['categories']:
+            if category == category_dict['category']:
+                group = category_dict['group']
+                break
 
         if group not in distance[category]:
             distance[category][group] = {}
@@ -99,7 +104,7 @@ for category in categories:
         distance[category][group]['avg'] = sum / count
 
 def category_list(request):
-    return JsonResponse({'categories': categories})
+    return JsonResponse({'categories': list(categories)})
 
 def category_stats(request, category):
     stats = {}

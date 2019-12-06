@@ -21,7 +21,7 @@ def addTask():
             if entry['value']:
                 t = Task(task_id=entry['_id'],task_name=entry['imagename'])
                 t.save()
-                print(entry['_id'],entry['value'])
+                #print(entry['_id'],entry['value'])
                 r = Result(worker=Worker.objects.get(worker_id=entry['workerId']),
                     task=t,
                     value=next((i for i, x in enumerate(entry['value']) if x), None)+1)
