@@ -104,7 +104,7 @@ for category in categories:
         distance[category][group]['avg'] = sum / count
 
 def category_list(request):
-    return JsonResponse({'categories': list(categories)})
+    return JsonResponse(md)
 
 def category_stats(request, category):
     stats = {}
