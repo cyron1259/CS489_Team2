@@ -6,7 +6,8 @@ from . import views
 urlpatterns = [
     path('categories/', views.category_list),
     path('categories/<slug:category>/', views.category_stats),
-    path('img/<slug:group>/', views.group_dist),
+    path('groups/<slug:group>/', views.group_dist),
+    path('img/<slug:image>/', views.image_workers),
     path('img/<slug:image>/<slug:group>/', views.image_dist),
 ]
 if settings.DEBUG == True:

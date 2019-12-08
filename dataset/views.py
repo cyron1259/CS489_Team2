@@ -4,6 +4,8 @@ from .models import Worker, Task, Result
 from .serializers import WorkerSerializer, ResultSerializer
 import json
 import os.path
+import statistics
+import numpy as np
 
 with open(os.path.dirname(__file__) + '/../metadata.json') as mdfile:
     md = json.load(mdfile)
@@ -51,8 +53,8 @@ for worker in worker_list:
 for result in result_list:
     if result['task'].startswith('img') and result['task'] not in image_list:
         image_list.append(result['task'])
-    for category in categories:
 
+    for category in categories:
         for category_dict in worker_list[result['worker'] - 1]['categories']:
             if category == category_dict['category']:
                 group = category_dict['group']
@@ -91,8 +93,12 @@ for category in categories:
         max = 0
         sum = 0
         count = 0
+        distance[category][group]['distances'] = []
         for image in distance[category][group].keys():
+            if image == 'distances':
+                continue
             dist = distance[category][group][image]['distance']
+            distance[category][group]['distances'].append(dist)
             if min > dist:
                 min = dist
             if max < dist:
@@ -108,26 +114,44 @@ def category_list(request):
 
 def category_stats(request, category):
     stats = {}
-    for group in distance[category].keys():
+    for group in md['categories'][category]:
+        distance[category][group]['distances'].sort()
+        dists = np.array(distance[category][group]['distances'])
         stats[group] = {}
         stats[group]['count'] = group_size[category][group]
         stats[group]['min'] = distance[category][group]['min']
         stats[group]['max'] = distance[category][group]['max']
         stats[group]['avg'] = distance[category][group]['avg']
+        stats[group]['1q'] = np.percentile(dists, 25)
+        stats[group]['med'] = np.percentile(dists, 50)
+        stats[group]['3q'] = np.percentile(dists, 75)
     return JsonResponse(stats)
 
 def group_dist(request, group):
     stats = {}
-    for category in categories:
-        if group in distance[category]:
+    for category in md['categories']:
+        if group in md['categories'][category]:
             for image in image_list:
                 if image in distance[category][group]:
                     stats[image] = distance[category][group][image]['distance']
-    return JsonResponse(stats)
+    return JsonResponse(dict(sorted(stats.items(), key=lambda kv: kv[1], reverse=True)))
+
+def image_workers(request, image):
+    ret = {'workers': []}
+    for result in result_list:
+        if result['task'] == image:
+            worker_info = worker_list[result['worker'] - 1]
+            work = {}
+            work['worker_id'] = worker_info['worker_id']
+            work['value'] = result['value']
+            for cat in worker_info['categories']:
+                work[cat['category']] = cat['group']
+            ret['workers'].append(work)
+    return JsonResponse(ret)
 
 def image_dist(request, image, group):
-    for category in categories:
-        if group in distance[category]:
+    for category in md['categories']:
+        if group in md['categories'][category]:
             if image in distance[category][group]:
                 ret = {
                     'id': image,
