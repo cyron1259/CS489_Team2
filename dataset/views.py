@@ -38,7 +38,10 @@ def compute_Wasserstein(v1, v2):
     return sum
 
 def init():
-    global worker_serializer, result_serializer, worker_list, result_list
+    global worker_serializer, result_serializer
+    global distance, group_size, overall_distribution, image_list
+    global worker_list, result_list
+    global md, scale, categories
     if (worker_serializer is not None) and (result_serializer is not None):
         return 
 
