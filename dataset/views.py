@@ -38,6 +38,7 @@ def compute_Wasserstein(v1, v2):
     return sum
 
 def init():
+    global worker_serializer, result_serializer
     if (worker_serializer is not None) and (result_serializer is not None):
         return 
 
@@ -129,6 +130,8 @@ def category_list(request):
 def category_stats(request, category):
     init()
     stats = {}
+    global md
+
     for group in md['categories'][category]:
         distance[category][group]['distances'].sort()
         dists = np.array(distance[category][group]['distances'])
@@ -145,6 +148,7 @@ def category_stats(request, category):
 def group_dist(request, group):
     stats = {}
     init()
+    global md
     for category in md['categories']:
         if group in md['categories'][category]:
             for image in image_list:
@@ -154,7 +158,7 @@ def group_dist(request, group):
 
 def image_workers(request, image):
     init()
-
+    global result_list
     ret = {'workers': []}
     for result in result_list:
         if result['task'] == image:
@@ -169,6 +173,7 @@ def image_workers(request, image):
 
 def image_dist(request, image, group):
     init()
+    global md
 
     for category in md['categories']:
         if group in md['categories'][category]:
